@@ -1,5 +1,5 @@
 import './App.css'
-import UserLogin from './components/auth/userLogin'
+import UserLogin from './features/auth/userLogin'
 import { createBrowserRouter } from 'react-router'
 import { RouterProvider } from 'react-router'
 import LandingPage from './components/landingpage'
