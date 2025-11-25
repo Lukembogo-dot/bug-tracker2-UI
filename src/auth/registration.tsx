@@ -1,8 +1,10 @@
-import { Navigation as Navbar } from "../../components/nav/Navigation";
+import { Navigation } from "../components/nav/Navigation";
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import React from 'react';
+
+
 
 type FormValues = {
   username: string;
@@ -34,7 +36,7 @@ const Registration: React.FC = () => {
 
   return (
     <>
-      <Navbar />
+      <Navigation />
       <div className="min-h-screen flex items-center justify-center bg-base-200">
         <div className="card w-96 bg-base-100 shadow-xl">
           <div className="card-body">
@@ -46,7 +48,7 @@ const Registration: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  {...register('username')}
+                  {...register("username")}
                   placeholder="Enter your username"
                   className="input input-bordered w-full"
                 />
@@ -70,7 +72,7 @@ const Registration: React.FC = () => {
                 </label>
                 <input
                   type="password"
-                  {...register('password')}
+                  {...register("password")}
                   placeholder="Enter your password"
                   className="input input-bordered w-full"
                 />

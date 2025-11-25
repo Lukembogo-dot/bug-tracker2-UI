@@ -1,12 +1,11 @@
-import { Navigation } from "./nav/Navigation";
-import logo from "../assets/logo.png";
-import backgroundImage from "../assets/image-4.png";
+import { Navigation } from "../nav/Navigation";
+import logo from '../../assets/logo.png';
+import { Footer } from '../nav/footer';
 
 export default function LandingPage() {
     return (
     <div
-  className="relative min-h-screen bg-cover bg-center bg-no-repeat"
-  style={{ backgroundImage: `url(${backgroundImage})` }}
+  className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900"
 >
   {/* Overlay */}
   <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
@@ -82,6 +81,7 @@ export default function LandingPage() {
       </div>
     </div>
   </div>
+  <Footer />
 </div>
 
     );

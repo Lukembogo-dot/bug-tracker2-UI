@@ -1,8 +1,8 @@
-import { NavLink } from 'react-router'
+import { NavLink } from 'react-router';
 
 export const Navigation = () => {
   return (
-    <div className="navbar bg-base-100 shadow-sm">
+    <div className="navbar bg-base-100 text-white shadow-sm bg-black/60 p-4 mb-8">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -23,9 +23,8 @@ export const Navigation = () => {
             tabIndex={0}
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
             <li><NavLink to="/">Home</NavLink></li>
-            <li><NavLink to="/bugs">Bugs</NavLink></li>
-            <li><NavLink to="/projects">Projects</NavLink></li>
-            <li><NavLink to="/comments">Comments</NavLink></li>
+            <li><NavLink to="/about">About</NavLink></li>
+            <li><NavLink to="/contact">Contact</NavLink></li>
           </ul>
         </div>
         <a className="btn btn-ghost text-xl">Bug Tracker</a>
@@ -33,14 +32,14 @@ export const Navigation = () => {
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li><NavLink to="/">Home</NavLink></li>
-          <li><NavLink to="/bugs">Bugs</NavLink></li>
-          <li><NavLink to="/projects">Projects</NavLink></li>
-          <li><NavLink to="/comments">Comments</NavLink></li>
+          <li><NavLink to="/about">About</NavLink></li>
+          <li><NavLink to="/contact">Contact</NavLink></li>
         </ul>
       </div>
       <div className="navbar-end">
         <NavLink to="/userLogin" className="btn">Login</NavLink>
+        <NavLink to="/register" className="btn btn-primary ml-2">Register</NavLink>
       </div>
     </div>
-  )
-}
+  );
+};
