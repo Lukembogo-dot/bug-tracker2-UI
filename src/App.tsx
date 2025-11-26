@@ -6,6 +6,7 @@ import LandingPage from './components/home/landingpage'
 import About from './components/about/about'
 import Contact from './components/contact/contacts'
 import Registration from './auth/registration'
+import { Admindashboard } from './components/Dashboard/Admin dashboard/Aside/Admindashboard'
 function App() {
   const router = createBrowserRouter([
     {
@@ -28,13 +29,15 @@ function App() {
       path: '/register',
       element: <Registration />
     },
+    {
+      path: '/admin/dashboard',
+      element: <Admindashboard />
+    }
   ])
-
 
   return (
     <>
       <RouterProvider router={router} />
-      
     </>
   )
 }
