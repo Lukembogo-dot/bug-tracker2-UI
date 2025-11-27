@@ -6,7 +6,6 @@ import AdminProfile from '../content/AdminProfile'
 
 export const Admindashboard = () => {
   const [activeView, setActiveView] = useState<'profile' | 'comments' | 'bugs' | 'projects' | 'homepage'>('profile')
-  const [drawerOpen, setDrawerOpen] = useState(false)
 
   const renderContent = () => {
     switch (activeView) {
