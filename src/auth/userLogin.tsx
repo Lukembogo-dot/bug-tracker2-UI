@@ -2,7 +2,7 @@ import { Navigation } from "../components/nav/Navigation";
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup'; //validator
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 type FormValues = {
   username: string;
