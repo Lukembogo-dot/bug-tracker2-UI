@@ -1,1 +1,1 @@
-export const apidomain = "http://localhost:3000/api"
+export const apidomain = "https://bug-tracker2-a7xv.onrender.com/api"

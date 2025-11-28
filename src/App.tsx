@@ -6,7 +6,8 @@ import LandingPage from './components/home/landingpage'
 import About from './components/about/about'
 import Contact from './components/contact/contacts'
 import Registration from './auth/registration'
-import { Admindashboard } from './components/Dashboard/Admin dashboard/Aside/Admindashboard'
+import { Userdashboard } from './components/Dashboard/Userdashbord/Aside/Userdashboard'
+import { Admindashboard } from './components/Dashboard/Admindashboard.tsx/Aside/Admindashboard'
 function App() {
   const router = createBrowserRouter([
     {
@@ -32,6 +33,10 @@ function App() {
     {
       path: '/admin/dashboard',
       element: <Admindashboard />
+    },
+    {
+      path: '/user/dashboard',
+      element: <Userdashboard />
     }
   ])
 

@@ -2,15 +2,15 @@ import { useState } from 'react'
 import Bugs from '../content/Bugs'
 import Comments from '../content/Comments'
 import Projects from '../content/Projects'
-import AdminProfile from '../content/AdminProfile'
+import UserProfile from '../content/UserProfile'
 
-export const Drawer = () => {
+export const Userdashboard = () => {
   const [activeView, setActiveView] = useState<'profile' | 'comments' | 'bugs' | 'projects' | 'homepage'>('profile')
 
   const renderContent = () => {
     switch (activeView) {
       case 'profile':
-        return <AdminProfile />
+        return <UserProfile />
       case 'comments':
         return <Comments />
       case 'bugs':
@@ -27,13 +27,12 @@ export const Drawer = () => {
           </div>
         )
       default:
-        return <AdminProfile />
+        return <UserProfile />
     }
   }
 
   return (
-    <div className="drawer">
-      <div className="drawer lg:drawer-open">
+    <div className="drawer lg:drawer-open">
   <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
   <div className="drawer-content min-h-screen w-full">
     {/* Navbar */}
@@ -42,7 +41,7 @@ export const Drawer = () => {
         {/* Sidebar toggle icon */}
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4"><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M14 10l2 2l-2 2"></path></svg>
       </label>
-      <div className="px-4">Navbar Title</div>
+      <div className="px-4">Admin Dashboard</div>
     </nav>
     {/* Page content here */}
     {renderContent()}
@@ -57,7 +56,7 @@ export const Drawer = () => {
         <li>
           <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Profile" onClick={() => setActiveView('profile')}>
             {/* Profile icon */}
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M256 48l0 16c0 17.7-14.3 32-32 32l-64 0c-17.7 0-32-14.3-32-32l0-16-64 0c-8.8 0-16 7.2-16 16l0 384c0 8.8 7.2 16 16 16l256 0c8.8 0 16-7.2 16-16l0-384c0-8.8-7.2-16-16-16l-64 0zM0 64C0 28.7 28.7 0 64 0L320 0c35.3 0 64 28.7 64 64l0 384c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 64zM160 320l64 0c44.2 0 80 35.8 80 80 0 8.8-7.2 16-16 16L96 416c-8.8 0-16-7.2-16-16 0-44.2 35.8-80 80-80zm-24-96a56 56 0 1 1 112 0 56 56 0 1 1 -112 0z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
             <span className="is-drawer-close:hidden">Profile</span>
           </button>
         </li>
@@ -84,10 +83,10 @@ export const Drawer = () => {
              <span className="is-drawer-close:hidden">Projects</span>
            </button>
          </li>
+
       </ul>
     </div>
   </div>
 </div>
-    </div>
   )
 }

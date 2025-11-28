@@ -1,4 +1,4 @@
-export default function AdminProfile() {
+export default function UserProfile() {
     return (
         <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900">
             {/* Overlay */}
@@ -6,7 +6,7 @@ export default function AdminProfile() {
 
             <div className="relative z-10 flex flex-col min-h-screen px-4 sm:px-6 lg:px-8">
                 <div className="w-full px-4">
-                    <h1 className="text-3xl font-bold mb-6 text-center text-white">Admin Profile</h1>
+                    <h1 className="text-3xl font-bold mb-6 text-center text-white">User Profile</h1>
 
                     {/* Profile Card */}
                     <div className="card bg-black/60 text-white shadow-xl mb-6 rounded-md fullscreen">
