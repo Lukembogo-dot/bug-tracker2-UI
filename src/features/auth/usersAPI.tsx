@@ -1,5 +1,6 @@
 import { apidomain } from "../../utils/APIdomains";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
 
 export type Tuser = {
     userid: number;
@@ -16,13 +17,13 @@ export const usersAPI = createApi({
     endpoints: (builder) => ({
         createUsers: builder.mutation<Tuser, Partial<Tuser>>({
             query : (newUser) => ({
-                url : "/users",
+                url : "/api/users/register",
                 method : "POST",
                 body : newUser,
-            }), 
+            }),
             invalidatesTags: ["Users"],
         }),
-        getUsers: builder.query<Tuser[], void>({
+        getUsers: builder.query<{ users: Tuser[] }, void>({
             query: () => "/users",
             providesTags: ["Users"],
         }),
