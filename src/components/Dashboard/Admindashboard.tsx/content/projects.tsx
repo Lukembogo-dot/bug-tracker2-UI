@@ -30,7 +30,7 @@ export default function Projects() {
         <div>
             <h1>All Projects</h1>
             <ul>
-                {projects?.map((project) => (
+                {projects?.projects?.map((project) => (
                     <li key={project.projectid}>
                         {editingId === project.projectid ? (
                             <div>

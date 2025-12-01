@@ -11,7 +11,16 @@ export type TComment = {
 
 export const commentsAPI = createApi({
     reducerPath: "commentsAPI",
-    baseQuery: fetchBaseQuery({ baseUrl: apidomain }),
+    baseQuery: fetchBaseQuery({
+        baseUrl: apidomain,
+        prepareHeaders: (headers) => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                headers.set('authorization', `Bearer ${token}`);
+            }
+            return headers;
+        },
+    }),
     tagTypes: ["Comments"],
     endpoints: (builder) => ({
         getComments: builder.query<TComment[], void>({

@@ -12,10 +12,19 @@ export type TProject = {
 
 export const projectsAPI = createApi({
     reducerPath: "projectsAPI",
-    baseQuery: fetchBaseQuery({ baseUrl: apidomain }),
+    baseQuery: fetchBaseQuery({
+        baseUrl: apidomain,
+        prepareHeaders: (headers) => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                headers.set('authorization', `Bearer ${token}`);
+            }
+            return headers;
+        },
+    }),
     tagTypes: ["Projects"],
     endpoints: (builder) => ({
-        getProjects: builder.query<TProject[], void>({
+        getProjects: builder.query<{ projects: TProject[] }, void>({
             query: () => "/projects",
             providesTags: ["Projects"],
         }),

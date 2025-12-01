@@ -16,7 +16,16 @@ export type TBug = {
 
 export const bugsAPI = createApi({
     reducerPath: "bugsAPI",
-    baseQuery: fetchBaseQuery({ baseUrl: apidomain }),
+    baseQuery: fetchBaseQuery({
+        baseUrl: apidomain,
+        prepareHeaders: (headers) => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                headers.set('authorization', `Bearer ${token}`);
+            }
+            return headers;
+        },
+    }),
     tagTypes: ["Bugs"],
     endpoints: (builder) => ({
         getBugs: builder.query<TBug[], void>({

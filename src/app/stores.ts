@@ -11,7 +11,8 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 const persistConfig = {
   key: 'root',
   version: 1,
-  storage
+  storage,
+  blacklist: [usersAPI.reducerPath, bugsAPI.reducerPath, commentsAPI.reducerPath, projectsAPI.reducerPath]
 }
 
 const rootReducer = combineReducers({
@@ -26,9 +27,11 @@ export const store = configureStore({
     reducer: persistedReducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false,
-    }).concat(usersAPI.middleware).concat(bugsAPI.middleware).concat(commentsAPI.middleware).concat(projectsAPI.middleware)
+    }).concat(usersAPI.middleware).concat(bugsAPI.middleware).concat(commentsAPI.middleware).concat(projectsAPI.middleware),
+    devTools: import.meta.env.MODE !== 'production'
 });
 
 export const persistor = createPersistStore(store);
 export const persistStore = persistor;
 export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

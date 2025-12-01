@@ -12,12 +12,28 @@ export type Tuser = {
 
 export const usersAPI = createApi({
     reducerPath: "usersAPI",
-    baseQuery: fetchBaseQuery({ baseUrl: apidomain }),
+    baseQuery: fetchBaseQuery({
+        baseUrl: apidomain,
+        prepareHeaders: (headers) => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                headers.set('authorization', `Bearer ${token}`);
+            }
+            return headers;
+        },
+    }),
     tagTypes: ["Users"],
     endpoints: (builder) => ({
+        login: builder.mutation<{ token: string; user: Tuser }, { username: string; password: string }>({
+            query: (credentials) => ({
+                url: "/auth/login",
+                method: "POST",
+                body: credentials,
+            }),
+        }),
         createUsers: builder.mutation<Tuser, Partial<Tuser>>({
             query : (newUser) => ({
-                url : "/api/users/register",
+                url : "/users/register",
                 method : "POST",
                 body : newUser,
             }),
@@ -38,6 +54,7 @@ export const usersAPI = createApi({
 });
 
 export const {
+    useLoginMutation,
     useCreateUsersMutation,
     useGetUsersQuery,
     useDeleteUserMutation,
