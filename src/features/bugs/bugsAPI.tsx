@@ -28,7 +28,7 @@ export const bugsAPI = createApi({
     }),
     tagTypes: ["Bugs"],
     endpoints: (builder) => ({
-        getBugs: builder.query<TBug[], void>({
+        getBugs: builder.query<{ bugs: TBug[] }, void>({
             query: () => "/bugs",
             providesTags: ["Bugs"],
         }),

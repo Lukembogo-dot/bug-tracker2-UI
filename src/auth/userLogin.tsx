@@ -7,7 +7,7 @@ import { useLoginMutation } from '../features/auth/usersAPI';
 import { useNavigate } from 'react-router';
 
 type FormValues = {
-  username: string;
+  email: string;
   password: string;
 };
 
@@ -16,7 +16,7 @@ const UserLogin = () => {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const schema = yup.object().shape({
-    username: yup.string().min(3, 'Min 3 characters').matches(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores').min(3, 'Min 3 characters').max(100, 'Max 100 characters').required('Invalid username').max(100, 'Max 100 characters').required('Username is required'),
+    email: yup.string().email('Invalid email format').required('Email is required'),
     password: yup.string().min(8, 'Min 8 characters').required('Password is required'),
   });
 
@@ -28,7 +28,12 @@ const UserLogin = () => {
     try {
       const result = await login(data).unwrap();
       localStorage.setItem('token', result.token);
-      navigate('/admin/dashboard');
+      // Navigate based on user role
+      if (result.user.role === 'admin') {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/user/dashboard');
+      }
     } catch (err: any) {
       setError(err.data?.message || 'Login failed');
     }
@@ -44,14 +49,14 @@ const UserLogin = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Username</span>
+                  <span className="label-text">Email</span>
                 </label>
                 <input
-                  type="text"
-                  placeholder="Enter your username"
+                  type="email"
+                  placeholder="Enter your email"
                   className="input input-bordered w-full"
                   required
-                  {...register("username")}
+                  {...register("email")}
                 />
               </div>
               <div className="form-control">

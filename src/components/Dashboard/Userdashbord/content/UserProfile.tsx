@@ -18,9 +18,9 @@ export default function UserProfile() {
                                     </div>
                                 </div>
                                 <div className="text-center">
-                                    <h2 className="card-title text-2xl">Admin Name</h2>
-                                    <p className="text-lg">Administrator</p>
-                                    <p>Email: admin@example.com</p>
+                                    <h2 className="card-title text-2xl">User Name</h2>
+                                    <p className="text-lg">User</p>
+                                    <p>Email: user@example.com</p>
                                     <p>Joined: January 2023</p>
                                 </div>
                             </div>

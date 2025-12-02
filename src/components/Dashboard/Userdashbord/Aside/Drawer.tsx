@@ -22,7 +22,7 @@ export const Drawer = () => {
           <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900">
             <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
             <div className="relative z-10 flex items-center justify-center min-h-screen">
-              <h1 className="text-3xl font-bold text-white">Welcome to Admin Dashboard</h1>
+              <h1 className="text-3xl font-bold text-white">Welcome to User Dashboard</h1>
             </div>
           </div>
         )

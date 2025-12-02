@@ -1,7 +1,8 @@
 import { useGetBugsQuery } from '../../../../features/bugs/bugsAPI';
 
 export default function Bugs() {
-    const { data: bugs, isLoading, isError, error } = useGetBugsQuery();
+    const { data, isLoading, isError, error } = useGetBugsQuery();
+    const bugs = data?.bugs;
 
     const getStatusBadge = (status: string) => {
         const statusStyles: Record<string, string> = {
@@ -53,12 +54,17 @@ export default function Bugs() {
     }
 
     return (
-        <div className="p-6 bg-base-100 min-h-screen">
+        <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900">
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
+
+            <div className="relative z-10 flex flex-col min-h-screen px-4 sm:px-6 lg:px-8">
+                <div className="w-full px-4 py-6">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
                 <div>
-                    <h1 className="text-3xl font-bold text-base-content">Bug Tracker</h1>
-                    <p className="text-base-content/60 mt-1">Manage and track all reported bugs</p>
+                    <h1 className="text-3xl font-bold text-white">Bug Tracker</h1>
+                    <p className="text-white/80 mt-1">Manage and track all reported bugs</p>
                 </div>
                 <div className="mt-4 md:mt-0 flex gap-2">
                     <button className="btn btn-primary">
@@ -72,41 +78,41 @@ export default function Bugs() {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <div className="stat bg-base-200 rounded-box">
+                <div className="stat bg-black/60 text-white rounded-box hover:bg-black/70 transition-colors">
                     <div className="stat-figure text-error">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
-                    <div className="stat-title">Open</div>
+                    <div className="stat-title text-white/80">Open</div>
                     <div className="stat-value text-error">{bugs?.filter(b => b.status === 'open').length || 0}</div>
                 </div>
-                <div className="stat bg-base-200 rounded-box">
+                <div className="stat bg-black/60 text-white rounded-box hover:bg-black/70 transition-colors">
                     <div className="stat-figure text-warning">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                     </div>
-                    <div className="stat-title">In Progress</div>
+                    <div className="stat-title text-white/80">In Progress</div>
                     <div className="stat-value text-warning">{bugs?.filter(b => b.status === 'in-progress').length || 0}</div>
                 </div>
-                <div className="stat bg-base-200 rounded-box">
+                <div className="stat bg-black/60 text-white rounded-box hover:bg-black/70 transition-colors">
                     <div className="stat-figure text-success">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                     </div>
-                    <div className="stat-title">Resolved</div>
+                    <div className="stat-title text-white/80">Resolved</div>
                     <div className="stat-value text-success">{bugs?.filter(b => b.status === 'resolved').length || 0}</div>
                 </div>
-                <div className="stat bg-base-200 rounded-box">
-                    <div className="stat-figure text-base-content">
+                <div className="stat bg-black/60 text-white rounded-box hover:bg-black/70 transition-colors">
+                    <div className="stat-figure text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                         </svg>
                     </div>
-                    <div className="stat-title">Total Bugs</div>
-                    <div className="stat-value">{bugs?.length || 0}</div>
+                    <div className="stat-title text-white/80">Total Bugs</div>
+                    <div className="stat-value text-white">{bugs?.length || 0}</div>
                 </div>
             </div>
 
@@ -130,27 +136,27 @@ export default function Bugs() {
             </div>
 
             {/* Bugs Table */}
-            <div className="overflow-x-auto bg-base-200 rounded-box">
-                <table className="table table-zebra">
+            <div className="overflow-x-auto bg-black/60 rounded-box">
+                <table className="table table-zebra text-white">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Title</th>
-                            <th>Status</th>
-                            <th>Priority</th>
-                            <th>Created</th>
-                            <th>Actions</th>
+                            <th className="text-white">ID</th>
+                            <th className="text-white">Title</th>
+                            <th className="text-white">Status</th>
+                            <th className="text-white">Priority</th>
+                            <th className="text-white">Created</th>
+                            <th className="text-white">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {bugs && bugs.length > 0 ? (
                             bugs.map((bug) => (
                                 <tr key={bug.bugid} className="hover">
-                                    <td className="font-mono text-sm">#{bug.bugid}</td>
+                                    <td className="font-mono text-sm text-white">#{bug.bugid}</td>
                                     <td>
                                         <div className="flex flex-col">
-                                            <span className="font-medium">{bug.title}</span>
-                                            <span className="text-sm text-base-content/60 truncate max-w-xs">
+                                            <span className="font-medium text-white">{bug.title}</span>
+                                            <span className="text-sm text-white/60 truncate max-w-xs">
                                                 {bug.description}
                                             </span>
                                         </div>
@@ -165,7 +171,7 @@ export default function Bugs() {
                                             {bug.priority}
                                         </span>
                                     </td>
-                                    <td className="text-sm">{formatDate(bug.createdat)}</td>
+                                    <td className="text-sm text-white">{formatDate(bug.createdat)}</td>
                                     <td>
                                         <div className="flex gap-1">
                                             <button className="btn btn-ghost btn-xs" title="View">
@@ -192,10 +198,10 @@ export default function Bugs() {
                             <tr>
                                 <td colSpan={6} className="text-center py-8">
                                     <div className="flex flex-col items-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
-                                        <span className="text-base-content/60">No bugs found</span>
+                                        <span className="text-white/60">No bugs found</span>
                                     </div>
                                 </td>
                             </tr>
@@ -216,6 +222,8 @@ export default function Bugs() {
                     </div>
                 </div>
             )}
+                </div>
+            </div>
         </div>
     );
 }

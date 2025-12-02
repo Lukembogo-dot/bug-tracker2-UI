@@ -2,16 +2,14 @@ import { useState } from 'react'
 import Bugs from '../content/bugs'
 import Comments from '../content/comments'
 import Projects from '../content/projects'
-import Profile from '../content/profile'
 import Users from '../content/users'
 
 export const Admindashboard = () => {
-  const [activeView, setActiveView] = useState<'profile' | 'comments' | 'bugs' | 'projects' | 'users' | 'homepage'>('homepage')
+  const [activeView, setActiveView] = useState<'comments' | 'bugs' | 'projects' | 'users' | 'homepage'>('homepage')
 
   const renderContent = () => {
     switch (activeView) {
-      case 'profile':
-        return <Profile />
+
       case 'comments':
         return <Comments />
       case 'bugs':
@@ -30,7 +28,6 @@ export const Admindashboard = () => {
           </div>
         )
       default:
-        return <Profile />
     }
   }
 
@@ -68,18 +65,6 @@ export const Admindashboard = () => {
                   <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                 </svg>
                 <span className="is-drawer-close:hidden">Home</span>
-              </button>
-            </li>
-
-            {/* Profile */}
-            <li>
-              <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Profile" onClick={() => setActiveView('profile')}>
-                {/* Profile icon */}
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4">
-                  <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <span className="is-drawer-close:hidden">Profile</span>
               </button>
             </li>
 

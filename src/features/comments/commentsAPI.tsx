@@ -23,7 +23,7 @@ export const commentsAPI = createApi({
     }),
     tagTypes: ["Comments"],
     endpoints: (builder) => ({
-        getComments: builder.query<TComment[], void>({
+        getComments: builder.query<{ comments: TComment[] }, void>({
             query: () => "/comments",
             providesTags: ["Comments"],
         }),

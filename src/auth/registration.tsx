@@ -2,7 +2,9 @@ import { Navigation } from "../components/nav/Navigation";
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import React from 'react';
+import React, { useState } from 'react';
+import { useCreateUsersMutation } from '../features/auth/usersAPI';
+import { useNavigate } from 'react-router';
 
 
 
@@ -14,6 +16,11 @@ type FormValues = {
 };
 
 const Registration: React.FC = () => {
+  const [createUser, { isLoading }] = useCreateUsersMutation();
+  const navigate = useNavigate();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
   const schema = yup.object().shape({
     username: yup.string().min(3, 'Min 3 characters').max(100, 'Max 100 characters').required('Username is required'),
     email: yup.string().email('Invalid email').required('Email is required'),
@@ -29,9 +36,17 @@ const Registration: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data);
-    // Handle registration logic here
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    try {
+      setError(null);
+      setSuccess(null);
+      const { confirmPassword, ...userData } = data;
+      await createUser(userData).unwrap();
+      setSuccess('Registration successful! Please login.');
+      setTimeout(() => navigate('/userLogin'), 2000);
+    } catch (err: any) {
+      setError(err.data?.message || 'Registration failed');
+    }
   };
 
   return (
@@ -91,11 +106,21 @@ const Registration: React.FC = () => {
                 {errors.confirmPassword && <span className="text-red-500 text-sm">{errors.confirmPassword.message}</span>}
               </div>
               <div className="form-control mt-6">
-                <button type="submit" className="btn btn-primary w-full">
-                  Register
+                <button type="submit" className="btn btn-primary w-full" disabled={isLoading}>
+                  {isLoading ? 'Registering...' : 'Register'}
                 </button>
               </div>
             </form>
+            {error && (
+              <div className="alert alert-error mt-4">
+                <span>{error}</span>
+              </div>
+            )}
+            {success && (
+              <div className="alert alert-success mt-4">
+                <span>{success}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

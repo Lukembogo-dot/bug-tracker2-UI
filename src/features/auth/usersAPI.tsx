@@ -24,16 +24,16 @@ export const usersAPI = createApi({
     }),
     tagTypes: ["Users"],
     endpoints: (builder) => ({
-        login: builder.mutation<{ token: string; user: Tuser }, { username: string; password: string }>({
+        login: builder.mutation<{ token: string; user: Tuser }, { email: string; password: string }>({
             query: (credentials) => ({
-                url: "/auth/login",
+                url: "/users/login",
                 method: "POST",
                 body: credentials,
             }),
         }),
         createUsers: builder.mutation<Tuser, Partial<Tuser>>({
             query : (newUser) => ({
-                url : "/users/register",
+                url : "/api/users/register",
                 method : "POST",
                 body : newUser,
             }),

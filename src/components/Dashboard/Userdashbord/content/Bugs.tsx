@@ -12,7 +12,7 @@ export default function Bugs() {
                     <div className="card bg-black/60 text-white shadow-xl mb-6 rounded-md">
                         <div className="card-body p-6">
                             <div className="hero-content flex-col lg:flex-row">
-                                <img src="/src/assets/MIT-Auto-bug.jpg" className="max-w-sm rounded-lg shadow-2xl" alt="Bug tracking illustration" />
+                                <img src="https://www.beningo.com/wp-content/uploads/2016/03/AdobeStock_100096286.jpeg" className="max-w-sm rounded-lg shadow-2xl" alt="Bug tracking illustration" />
                                 <div>
                                     <h1 className="text-4xl font-bold">Track & Manage Bugs</h1>
                                     <p className="py-6">Report, track, and resolve bugs efficiently with our comprehensive bug tracking system.</p>
