@@ -28,8 +28,9 @@ const UserLogin = () => {
     try {
       const result = await login(data).unwrap();
       localStorage.setItem('token', result.token);
+      localStorage.setItem('user', JSON.stringify(result.user));
       // Navigate based on user role
-      if (result.user.role === 'admin') {
+      if (result.user.role?.toLowerCase() === 'admin') {
         navigate('/admin/dashboard');
       } else {
         navigate('/user/dashboard');

@@ -33,7 +33,7 @@ export const usersAPI = createApi({
         }),
         createUsers: builder.mutation<Tuser, Partial<Tuser>>({
             query : (newUser) => ({
-                url : "/api/users/register",
+                url : "/users/register",
                 method : "POST",
                 body : newUser,
             }),
