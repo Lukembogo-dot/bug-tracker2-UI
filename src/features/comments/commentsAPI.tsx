@@ -3,9 +3,10 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export type TComment = {
     commentid: number;
-    content: string;
-    bugid: number;
-    userid: number;
+    CommentText: string;
+    username: string;
+    BugID: number;
+    UserID: number;
     createdat: string;
 };
 

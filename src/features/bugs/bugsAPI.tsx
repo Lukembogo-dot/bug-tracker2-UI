@@ -2,16 +2,15 @@ import { apidomain } from "../../utils/APIdomains";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export type TBug = {
-    bugid: number;
-    title: string;
-    description: string;
-    status: 'open' | 'in-progress' | 'resolved' | 'closed';
-    priority: 'low' | 'medium' | 'high' | 'critical';
-    projectid: number;
-    assignedto: number;
-    createdby: number;
-    createdat: string;
-    updatedat: string;
+    BugID: number;
+    Title: string;
+    Description: string | null;
+    Status: string;
+    Priority: string;
+    ProjectID: number;
+    ReportedBy: number | null;
+    AssignedTo: number | null;
+    CreatedAt: string;
 };
 
 export const bugsAPI = createApi({
@@ -30,6 +29,10 @@ export const bugsAPI = createApi({
     endpoints: (builder) => ({
         getBugs: builder.query<{ bugs: TBug[] }, void>({
             query: () => "/bugs",
+            providesTags: ["Bugs"],
+        }),
+        getBugsByAssignedUser: builder.query<{ bugs: TBug[] }, number>({
+            query: (userid) => `/bugs/assignee/${userid}`,
             providesTags: ["Bugs"],
         }),
         getBugById: builder.query<TBug, number>({
@@ -65,6 +68,7 @@ export const bugsAPI = createApi({
 export const {
     useGetBugsQuery,
     useGetBugByIdQuery,
+    useGetBugsByAssignedUserQuery,
     useCreateBugMutation,
     useUpdateBugMutation,
     useDeleteBugMutation,

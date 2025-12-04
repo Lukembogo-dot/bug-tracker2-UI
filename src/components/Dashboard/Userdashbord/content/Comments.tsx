@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { use, useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -6,8 +6,10 @@ import { useGetCommentsQuery, useCreateCommentMutation } from '../../../../featu
 import bugsImage from '../../../../assets/bugs.jpg';
 
 type CommentFormValues = {
-  bugid: number;
-  content: string;
+  BugID: number;
+  username?: string;
+  CommentText: string;
+  
 };
 
 export default function Comments() {
@@ -18,8 +20,8 @@ export default function Comments() {
     const [submitError, setSubmitError] = useState<string | null>(null);
 
     const schema = yup.object().shape({
-      bugid: yup.number().required('Bug ID is required').positive('Bug ID must be positive'),
-      content: yup.string().required('Comment content is required').min(5, 'Comment must be at least 5 characters'),
+      BugID: yup.number().required('Bug ID is required').positive('Bug ID must be positive'),
+      CommentText: yup.string().required('Comment content is required').min(5, 'Comment must be at least 5 characters'),
     });
 
     const { handleSubmit, register, reset, formState: { errors } } = useForm<CommentFormValues>({
@@ -35,9 +37,9 @@ export default function Comments() {
         }
 
         await createComment({
-          bugid: formData.bugid,
-          userid: user.userid,
-          content: formData.content,
+            BugID: Number(formData.BugID),
+            UserID: Number(user.userid),
+            CommentText: formData.CommentText,
         }).unwrap();
 
         reset();
@@ -98,21 +100,21 @@ export default function Comments() {
                                     <input
                                         type="number"
                                         placeholder="Enter bug ID"
-                                        className={`input input-bordered bg-white text-black w-full mt-2 ${errors.bugid ? 'input-error' : ''}`}
-                                        {...register("bugid")}
+                                        className={`input input-bordered bg-white text-black w-full mt-2 ${errors.BugID ? 'input-error' : ''}`}
+                                        {...register("BugID")}
                                     />
-                                    {errors.bugid && <span className="text-error text-sm mt-1">{errors.bugid.message}</span>}
+                                    {errors.BugID && <span className="text-error text-sm mt-1">{errors.BugID.message}</span>}
                                 </div>
                                 <div className="form-control">
                                     <label className="label mb-2">
                                         <span className="label-text text-white">Comment</span>
                                     </label>
                                     <textarea
-                                        className={`textarea textarea-bordered bg-white text-black w-full mt-2 h-28 ${errors.content ? 'textarea-error' : ''}`}
+                                        className={`textarea textarea-bordered bg-white text-black w-full mt-2 h-28 ${errors.CommentText ? 'textarea-error' : ''}`}
                                         placeholder="Write your comment here"
-                                        {...register("content")}
+                                        {...register("CommentText")}
                                     ></textarea>
-                                    {errors.content && <span className="text-error text-sm mt-1">{errors.content.message}</span>}
+                                    {errors.CommentText && <span className="text-error text-sm mt-1">{errors.CommentText.message}</span>}
                                 </div>
                                 <button type="submit" className="btn btn-primary" disabled={isCreating}>
                                     {isCreating ? 'Posting...' : 'Post Comment'}
@@ -142,12 +144,12 @@ export default function Comments() {
                                                 </div>
                                             </div>
                                             <div className="chat-header">
-                                                User {comment.userid}
+                                                User {comment.username || comment.UserID}
                                                 <time className="text-xs opacity-50">
                                                     {new Date(comment.createdat).toLocaleString()}
                                                 </time>
                                             </div>
-                                            <div className="chat-bubble">{comment.content}</div>
+                                            <div className="chat-bubble text-white">{comment.CommentText}</div>
                                         </div>
                                     ))
                                 ) : (
