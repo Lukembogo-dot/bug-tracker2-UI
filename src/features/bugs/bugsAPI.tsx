@@ -2,15 +2,15 @@ import { apidomain } from "../../utils/APIdomains";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export type TBug = {
-    BugID: number;
-    Title: string;
-    Description: string | null;
-    Status: string;
-    Priority: string;
-    ProjectID: number;
-    ReportedBy: number | null;
-    AssignedTo: number | null;
-    CreatedAt: string;
+    bugid: number;
+    title: string;
+    description: string | null;
+    status: "Open" | "In Progress" | "Resolved" | "Closed";
+    priority: "Low" | "Medium" | "High" | "Critical";
+    projectid: number;
+    reportedby: number | null;
+    assignedto: number | null;
+    createdat: string;
 };
 
 export const bugsAPI = createApi({

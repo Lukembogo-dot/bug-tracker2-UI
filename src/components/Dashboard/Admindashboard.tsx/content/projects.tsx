@@ -1,20 +1,79 @@
-import { useState } from "react";
-import { useGetProjectsQuery, useUpdateProjectMutation } from "../../../../features/projects/projectsAPI";
+import { useState, useEffect } from "react";
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { useGetProjectsQuery, useUpdateProjectMutation, useCreateProjectMutation } from "../../../../features/projects/projectsAPI";
+import { useGetUsersQuery } from "../../../../features/auth/usersAPI";
+
+type ProjectFormValues = {
+    projectname: string;
+    description: string;
+    assignedto: number;
+};
 
 export default function Projects() {
+    const [user] = useState(() => {
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
+
+    const isAdmin = user?.role === 'Admin';
+
     const { data: projects, isLoading, error } = useGetProjectsQuery();
+    const { data: usersData, refetch: refetchUsers } = useGetUsersQuery();
+    const users = usersData?.users || [];
+    const [createProject, { isLoading: isCreating }] = useCreateProjectMutation();
     const [updateProject] = useUpdateProjectMutation();
     const [editingId, setEditingId] = useState<number | null>(null);
-    const [editData, setEditData] = useState({ name: "", description: "" });
+    const [editData, setEditData] = useState({ projectname: "", description: "" });
+
+    const schema = yup.object().shape({
+        projectname: yup.string().required('Project name is required').min(3, 'Project name must be at least 3 characters'),
+        description: yup.string().required('Description is required').min(10, 'Description must be at least 10 characters'),
+        assignedto: yup.number().required('Please select a user to assign this project to'),
+    });
+
+    const { handleSubmit, register, reset, formState: { errors } } = useForm<ProjectFormValues>({
+        resolver: yupResolver(schema),
+    });
+
+    useEffect(() => {
+        refetchUsers();
+    }, [refetchUsers]);
+
+    const onSubmit: SubmitHandler<ProjectFormValues> = async (formData) => {
+        try {
+            if (!user?.userid) {
+                alert('User not found. Please login again.');
+                return;
+            }
+
+            if (!isAdmin) {
+                alert('You do not have permission to create projects. Admin access required.');
+                return;
+            }
+
+            await createProject({
+                projectname: formData.projectname,
+                description: formData.description,
+                createdby: user.userid,
+                assignedto: formData.assignedto,
+            }).unwrap();
+
+            reset();
+        } catch (err: any) {
+            alert(err.data?.message || 'Failed to create project');
+        }
+    };
 
     const handleEdit = (project: any) => {
         setEditingId(project.projectid);
-        setEditData({ name: project.name, description: project.description });
+        setEditData({ projectname: project.projectname, description: project.description });
     };
 
     const handleSave = async () => {
         if (editingId) {
-            await updateProject({ id: editingId, data: editData });
+            await updateProject({ id: editingId, data: { projectname: editData.projectname, description: editData.description } });
             setEditingId(null);
         }
     };
@@ -49,6 +108,83 @@ export default function Projects() {
                 <div className="w-full px-4 py-6">
                     <h1 className="text-3xl font-bold text-white mb-6">All Projects</h1>
 
+                    {/* Create Project Form - Admin Only */}
+                    {isAdmin ? (
+                        <div className="card bg-black/60 text-white shadow-xl mb-6 rounded-md">
+                            <div className="card-body p-6">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h2 className="card-title text-2xl">Create New Project</h2>
+                                    <button
+                                        type="button"
+                                        onClick={() => refetchUsers()}
+                                        className="btn btn-outline btn-sm"
+                                        title="Refresh users list"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                        </svg>
+                                        Refresh Users
+                                    </button>
+                                </div>
+                                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                                    <div className="form-control">
+                                        <label className="label mb-2">
+                                            <span className="label-text text-white">Project Name</span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            placeholder="Enter project name"
+                                            className={`input input-bordered bg-white text-black w-full mt-2 ${errors.projectname ? 'input-error' : ''}`}
+                                            {...register("projectname")}
+                                        />
+                                        {errors.projectname && <span className="text-error text-sm mt-1">{errors.projectname.message}</span>}
+                                    </div>
+                                    <div className="form-control">
+                                        <label className="label mb-2">
+                                            <span className="label-text text-white">Description</span>
+                                        </label>
+                                        <textarea
+                                            className={`textarea textarea-bordered bg-white text-black w-full mt-2 h-28 ${errors.description ? 'textarea-error' : ''}`}
+                                            placeholder="Project description"
+                                            {...register("description")}
+                                        ></textarea>
+                                        {errors.description && <span className="text-error text-sm mt-1">{errors.description.message}</span>}
+                                    </div>
+                                    <div className="form-control">
+                                        <label className="label mb-2">
+                                            <span className="label-text text-white">Assign to User</span>
+                                        </label>
+                                        <select
+                                            className={`select select-bordered bg-white text-black w-full mt-2 ${errors.assignedto ? 'select-error' : ''}`}
+                                            {...register("assignedto")}
+                                        >
+                                            <option value="">Select a user</option>
+                                            {users.map((user) => (
+                                                <option key={user.userid} value={user.userid}>
+                                                    {user.username} ({user.email})
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errors.assignedto && <span className="text-error text-sm mt-1">{errors.assignedto.message}</span>}
+                                    </div>
+                                    <button type="submit" className="btn btn-primary" disabled={isCreating}>
+                                        {isCreating ? 'Creating...' : 'Create Project'}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="card bg-red-900/60 text-white shadow-xl mb-6 rounded-md">
+                            <div className="card-body p-6 text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-red-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                                </svg>
+                                <h3 className="text-xl font-bold mb-2">Admin Access Required</h3>
+                                <p className="text-red-200">You need administrator privileges to create projects. Please contact an administrator if you believe this is an error.</p>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="space-y-4">
                         {projects?.projects && projects.projects.length > 0 ? (
                             projects.projects.map((project) => (
@@ -62,8 +198,8 @@ export default function Projects() {
                                                     </label>
                                                     <input
                                                         type="text"
-                                                        value={editData.name}
-                                                        onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                                                        value={editData.projectname}
+                                                        onChange={(e) => setEditData({ ...editData, projectname: e.target.value })}
                                                         placeholder="Name"
                                                         className="input input-bordered bg-white text-black w-full"
                                                     />
@@ -86,10 +222,11 @@ export default function Projects() {
                                             </div>
                                         ) : (
                                             <div>
-                                                <h3 className="card-title text-xl mb-2">{project.name}</h3>
+                                                <h3 className="card-title text-xl mb-2">{project.projectname}</h3>
                                                 <p className="text-white/80 mb-4">{project.description}</p>
                                                 <div className="text-sm text-white/60 space-y-1 mb-4">
                                                     <p>Created by: User {project.createdby}</p>
+                                                    <p>Assigned to: User {project.assignedto}</p>
                                                     <p>Created: {new Date(project.createdat).toLocaleDateString()}</p>
                                                 </div>
                                                 <div className="card-actions justify-end">

@@ -42,7 +42,7 @@ export default function Comments() {
                             comments.map((comment) => (
                                 <div key={comment.commentid} className="card bg-black/60 text-white shadow-xl rounded-md hover:bg-black/70 transition-colors">
                                     <div className="card-body p-6">
-                                        <p className="text-lg">{comment.content}</p>
+                                        <p className="text-lg">{comment.commenttext}</p>
                                         <div className="flex justify-between items-center mt-4">
                                             <div className="text-sm text-white/80">
                                                 <p>Bug ID: {comment.bugid}, User ID: {comment.userid}</p>

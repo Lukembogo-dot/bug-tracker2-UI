@@ -85,7 +85,7 @@ export default function Bugs() {
                         </svg>
                     </div>
                     <div className="stat-title text-white/80">Open</div>
-                    <div className="stat-value text-error">{bugs?.filter(b => b.status === 'open').length || 0}</div>
+                    <div className="stat-value text-error">{bugs?.filter(b => b.status === 'Open').length || 0}</div>
                 </div>
                 <div className="stat bg-black/60 text-white rounded-box hover:bg-black/70 transition-colors">
                     <div className="stat-figure text-warning">
@@ -94,7 +94,7 @@ export default function Bugs() {
                         </svg>
                     </div>
                     <div className="stat-title text-white/80">In Progress</div>
-                    <div className="stat-value text-warning">{bugs?.filter(b => b.status === 'in-progress').length || 0}</div>
+                    <div className="stat-value text-warning">{bugs?.filter(b => b.status === 'In Progress').length || 0}</div>
                 </div>
                 <div className="stat bg-black/60 text-white rounded-box hover:bg-black/70 transition-colors">
                     <div className="stat-figure text-success">
@@ -103,7 +103,7 @@ export default function Bugs() {
                         </svg>
                     </div>
                     <div className="stat-title text-white/80">Resolved</div>
-                    <div className="stat-value text-success">{bugs?.filter(b => b.status === 'resolved').length || 0}</div>
+                    <div className="stat-value text-success">{bugs?.filter(b => b.status === 'Resolved').length || 0}</div>
                 </div>
                 <div className="stat bg-black/60 text-white rounded-box hover:bg-black/70 transition-colors">
                     <div className="stat-figure text-white">

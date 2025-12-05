@@ -1,4 +1,42 @@
+import { useState } from 'react';
+import { useGetProjectsByAssignedUserQuery } from '../../../../features/projects/projectsAPI';
+
 export default function Projects() {
+    const [user] = useState(() => {
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
+
+    const { data, isLoading, error } = useGetProjectsByAssignedUserQuery(user?.userid || 0);
+    const projects = data?.projects || [];
+   if(error){
+    console.log("error",error);
+   }
+
+   if(isLoading){
+    console.log("loading...");
+   }
+   else{
+    console.log(data)
+   }
+
+    if (isLoading) return (
+        <div className="flex items-center justify-center min-h-screen">
+            <span className="loading loading-spinner loading-lg text-primary"></span>
+        </div>
+    );
+
+    if (error) return (
+        <div className="flex items-center justify-center min-h-screen">
+            <div className="alert alert-error max-w-md">
+                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Error loading projects</span>
+            </div>
+        </div>
+    );
+
     return (
         <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900">
             {/* Overlay */}
@@ -6,80 +44,52 @@ export default function Projects() {
 
             <div className="relative z-10 flex flex-col min-h-screen px-4 sm:px-6 lg:px-8">
                 <div className="w-full px-4">
-                    <h1 className="text-3xl font-bold mb-6 text-center text-white">Projects</h1>
-
-                    {/* Add Project Form */}
-                    <div className="card bg-black/60 text-white shadow-xl mb-6 rounded-md">
-                        <div className="card-body p-6">
-                            <h2 className="card-title text-2xl mb-6">Create New Project</h2>
-                            <form className="space-y-4">
-                                <div className="form-control">
-                                    <label className="label mb-2">
-                                        <span className="label-text text-white">Project Name</span>
-                                    </label>
-                                    <input type="text" placeholder="Enter project name" className="input input-bordered bg-white text-black w-full mt-2" />
-                                </div>
-                                <div className="form-control">
-                                    <label className="label mb-2">
-                                        <span className="label-text text-white">Description</span>
-                                    </label>
-                                    <textarea className="textarea textarea-bordered bg-white text-black w-full mt-2 h-28" placeholder="Project description"></textarea>
-                                </div>
-                                <div className="form-control">
-                                    <label className="label mb-2">
-                                        <span className="label-text text-white">Start Date</span>
-                                    </label>
-                                    <input type="date" className="input input-bordered bg-white text-black w-full mt-2" />
-                                </div>
-                                <div className="form-control">
-                                    <label className="label mb-2">
-                                        <span className="label-text text-white">End Date</span>
-                                    </label>
-                                    <input type="date" className="input input-bordered bg-white text-black w-full mt-2" />
-                                </div>
-                                <button type="submit" className="btn btn-primary">Create Project</button>
-                            </form>
-                        </div>
-                    </div>
+                    <h1 className="text-3xl font-bold mb-6 text-center text-white">My Projects</h1>
 
                     {/* Projects List */}
                     <div className="card bg-black/60 text-white shadow-xl rounded-md">
                         <div className="card-body p-6">
-                            <h2 className="card-title text-2xl mb-6">All Projects</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <div className="card bg-white/10 text-white">
-                                    <div className="card-body">
-                                        <h3 className="card-title text-xl">Project A</h3>
-                                        <p>Description of Project A</p>
-                                        <div className="card-actions justify-end">
-                                            <button className="btn btn-sm btn-outline">View</button>
-                                            <button className="btn btn-sm btn-outline">Edit</button>
-                                            <button className="btn btn-sm btn-outline btn-error">Delete</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="card bg-white/10 text-white">
-                                    <div className="card-body">
-                                        <h3 className="card-title text-xl">Project B</h3>
-                                        <p>Description of Project B</p>
-                                        <div className="card-actions justify-end">
-                                            <button className="btn btn-sm btn-outline">View</button>
-                                            <button className="btn btn-sm btn-outline">Edit</button>
-                                            <button className="btn btn-sm btn-outline btn-error">Delete</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="card bg-white/10 text-white">
-                                    <div className="card-body">
-                                        <h3 className="card-title text-xl">Project C</h3>
-                                        <p>Description of Project C</p>
-                                        <div className="card-actions justify-end">
-                                            <button className="btn btn-sm btn-outline">View</button>
-                                            <button className="btn btn-sm btn-outline">Edit</button>
-                                            <button className="btn btn-sm btn-outline btn-error">Delete</button>
-                                        </div>
-                                    </div>
-                                </div>
+                            <h2 className="card-title text-2xl mb-6">Projects Assigned to Me</h2>
+                            <div className="overflow-x-auto">
+                                <table className="table table-zebra">
+                                    <thead>
+                                        <tr>
+                                            <th className="text-white">ID</th>
+                                            <th className="text-white">Project Name</th>
+                                            <th className="text-white">Description</th>
+                                            <th className="text-white">Created By</th>
+                                            <th className="text-white">Created Date</th>
+                                            <th className="text-white">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {isLoading?"Loading Projects":(
+                                            (projects.length > 0 ? (
+                                            projects.map((project) => (
+                                                <tr key={project.projectid}>
+                                                    <th className="text-white">#{project.projectid}</th>
+                                                    <td className="text-white font-medium">{project.projectname}</td>
+                                                    <td className="text-white max-w-xs truncate">{project.description}</td>
+                                                    <td className="text-white">User {project.createdby}</td>
+                                                    <td className="text-white">{new Date(project.createdat).toLocaleDateString()}</td>
+                                                    <td>
+                                                        <button className="btn btn-sm btn-outline">View</button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan={6} className="text-center py-8">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                                                    </svg>
+                                                    <span className="text-white/60">No projects assigned to you yet.</span>
+                                                </td>
+                                            </tr>
+                                        ))
+                                        )}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>

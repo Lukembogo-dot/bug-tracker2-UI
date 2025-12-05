@@ -3,13 +3,15 @@ import Bugs from '../content/bugs'
 import Comments from '../content/comments'
 import Projects from '../content/projects'
 import Users from '../content/users'
+import AdminProfile from '../content/profile'
 
 export const Admindashboard = () => {
-  const [activeView, setActiveView] = useState<'comments' | 'bugs' | 'projects' | 'users' | 'homepage'>('homepage')
+   const [activeView, setActiveView] = useState<'profile' | 'comments' | 'bugs' | 'projects' | 'users'>('profile')
 
   const renderContent = () => {
     switch (activeView) {
-
+      case 'profile':
+        return <AdminProfile onNavigate={setActiveView} />
       case 'comments':
         return <Comments />
       case 'bugs':
@@ -18,16 +20,8 @@ export const Admindashboard = () => {
         return <Projects />
       case 'users':
         return <Users />
-      case 'homepage':
-        return (
-          <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900">
-            <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
-            <div className="relative z-10 flex items-center justify-center min-h-screen">
-              <h1 className="text-3xl font-bold text-white">Welcome to Admin Dashboard</h1>
-            </div>
-          </div>
-        )
       default:
+        return <AdminProfile />
     }
   }
 
@@ -45,7 +39,7 @@ export const Admindashboard = () => {
               <path d="M14 10l2 2l-2 2"></path>
             </svg>
           </label>
-          <div className="px-4 font-semibold">Admin Dashboard</div>
+          <div className="px-4">Admin Dashboard</div>
         </nav>
         {/* Page content here */}
         {renderContent()}
@@ -53,18 +47,18 @@ export const Admindashboard = () => {
 
       <div className="drawer-side is-drawer-close:overflow-visible">
         <label htmlFor="admin-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-        <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
+        <div className="flex min-h-full flex-col items-start bg-white bg-opacity-95 is-drawer-close:w-14 is-drawer-open:w-64">
           {/* Sidebar content here */}
           <ul className="menu w-full grow">
-            {/* Home */}
+            {/* Profile */}
             <li>
-              <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Home" onClick={() => setActiveView('homepage')}>
-                {/* Home icon */}
+              <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Profile" onClick={() => setActiveView('profile')}>
+                {/* Profile icon */}
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4">
-                  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
-                  <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
                 </svg>
-                <span className="is-drawer-close:hidden">Home</span>
+                <span className="is-drawer-close:hidden">Profile</span>
               </button>
             </li>
 

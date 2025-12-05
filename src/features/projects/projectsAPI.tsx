@@ -3,9 +3,10 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export type TProject = {
     projectid: number;
-    name: string;
+    projectname: string;
     description: string;
     createdby: number;
+    assignedto: number;
     createdat: string;
     updatedat: string;
 };
@@ -30,6 +31,10 @@ export const projectsAPI = createApi({
         }),
         getProjectById: builder.query<TProject, number>({
             query: (id) => `/projects/${id}`,
+            providesTags: ["Projects"],
+        }),
+        getProjectsByAssignedUser: builder.query<{ projects: TProject[] }, number>({
+            query: (userid) => `/projects/assignee/${userid}`,
             providesTags: ["Projects"],
         }),
         createProject: builder.mutation<TProject, Partial<TProject>>({
@@ -61,6 +66,7 @@ export const projectsAPI = createApi({
 export const {
     useGetProjectsQuery,
     useGetProjectByIdQuery,
+    useGetProjectsByAssignedUserQuery,
     useCreateProjectMutation,
     useUpdateProjectMutation,
     useDeleteProjectMutation,
