@@ -50,58 +50,66 @@ const Registration: React.FC = () => {
   };
 
   return (
-    <>
-      <Navigation />
-      <div className="min-h-screen flex items-center justify-center bg-base-200">
-        <div className="card w-96 bg-base-100 shadow-xl">
+    <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900">
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
+
+      {/* Navigation */}
+      <div className="relative z-20">
+        <Navigation />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 flex items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8">
+        <div className="card w-96 bg-black/60 text-white shadow-xl rounded-md">
           <div className="card-body">
             <h2 className="card-title justify-center text-2xl font-bold">Register</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Username</span>
+                  <span className="label-text text-white">Username</span>
                 </label>
                 <input
                   type="text"
                   {...register("username")}
                   placeholder="Enter your username"
-                  className="input input-bordered w-full"
+                  className="input input-bordered bg-white text-black w-full"
                 />
                 {errors.username && <span className="text-red-500 text-sm">{errors.username.message}</span>}
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Email</span>
+                  <span className="label-text text-white">Email</span>
                 </label>
                 <input
                   type="email"
                   {...register('email')}
                   placeholder="Enter your email"
-                  className="input input-bordered w-full"
+                  className="input input-bordered bg-white text-black w-full"
                 />
                 {errors.email && <span className="text-red-500 text-sm">{errors.email.message}</span>}
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Password</span>
+                  <span className="label-text text-white">Password</span>
                 </label>
                 <input
                   type="password"
                   {...register("password")}
                   placeholder="Enter your password"
-                  className="input input-bordered w-full"
+                  className="input input-bordered bg-white text-black w-full"
                 />
                 {errors.password && <span className="text-red-500 text-sm">{errors.password.message}</span>}
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Confirm Password</span>
+                  <span className="label-text text-white">Confirm Password</span>
                 </label>
                 <input
                   type="password"
                   {...register('confirmPassword')}
                   placeholder="Confirm your password"
-                  className="input input-bordered w-full"
+                  className="input input-bordered bg-white text-black w-full"
                 />
                 {errors.confirmPassword && <span className="text-red-500 text-sm">{errors.confirmPassword.message}</span>}
               </div>
@@ -124,7 +132,7 @@ const Registration: React.FC = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

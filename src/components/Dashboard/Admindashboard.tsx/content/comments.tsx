@@ -5,9 +5,19 @@ export default function Comments() {
     const comments = data?.comments;
     const [deleteComment] = useDeleteCommentMutation();
 
-    const handleDelete = async (id: number) => {
+    const handleDelete = async (id?: number) => {
+        if (!id) {
+            console.error("Cannot delete comment: ID is undefined");
+            return;
+        }
+
         if (window.confirm("Are you sure you want to delete this comment?")) {
-            await deleteComment(id);
+            try {
+                await deleteComment(id).unwrap();
+                alert("Comment deleted successfully");
+            } catch (err: any) {
+                alert(err.data?.message || "Failed to delete comment");
+            }
         }
     };
 
@@ -33,31 +43,44 @@ export default function Comments() {
             {/* Overlay */}
             <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
 
-            <div className="relative z-10 flex flex-col min-h-screen px-4 sm:px-6 lg:px-8">
-                <div className="w-full px-4 py-6">
+            <div className="relative z-10 flex flex-col min-h-screen">
+                <div className="w-full">
                     <h1 className="text-3xl font-bold text-white mb-6">All Comments</h1>
 
                     <div className="space-y-4">
                         {comments && comments.length > 0 ? (
-                            comments.map((comment) => (
-                                <div key={comment.commentid} className="card bg-black/60 text-white shadow-xl rounded-md hover:bg-black/70 transition-colors">
-                                    <div className="card-body p-6">
-                                        <p className="text-lg">{comment.commenttext}</p>
-                                        <div className="flex justify-between items-center mt-4">
-                                            <div className="text-sm text-white/80">
-                                                <p>Bug ID: {comment.bugid}, User ID: {comment.userid}</p>
-                                                <p>Created: {new Date(comment.createdat).toLocaleString()}</p>
+                            comments.map((comment) => {
+                                const commentId = comment.commentid || comment.id;
+
+                                return (
+                                    <div key={commentId} className="chat chat-start">
+                                        <div className="chat-image avatar">
+                                            <div className="w-10 rounded-full">
+                                                <div className="bg-gray-400 w-full h-full rounded-full flex items-center justify-center text-white text-sm">
+                                                    {comment.username ? comment.username.charAt(0).toUpperCase() : 'U'}
+                                                </div>
                                             </div>
-                                            <button
-                                                onClick={() => handleDelete(comment.commentid)}
-                                                className="btn btn-sm btn-outline btn-error"
-                                            >
-                                                Delete
-                                            </button>
+                                        </div>
+                                        <div className="chat-header text-white/80 text-center">
+                                            {comment.username || `User ID: ${comment.userid}`}
+                                            <time className="text-xs opacity-50">
+                                                {new Date(comment.createdat).toLocaleString()}
+                                            </time>
+                                        </div>
+                                        <div className="chat-bubble text-white">{comment.commenttext}</div>
+                                        <div className="chat-footer text-white/60">
+                                            {commentId && (
+                                                <button
+                                                    onClick={() => handleDelete(commentId)}
+                                                    className="btn btn-xs btn-error ml-2"
+                                                >
+                                                    Delete
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
-                                </div>
-                            ))
+                                );
+                            })
                         ) : (
                             <div className="card bg-black/60 text-white shadow-xl rounded-md">
                                 <div className="card-body p-6 text-center">

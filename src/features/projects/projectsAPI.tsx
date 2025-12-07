@@ -53,9 +53,9 @@ export const projectsAPI = createApi({
             }),
             invalidatesTags: ["Projects"],
         }),
-        deleteProject: builder.mutation<void, number>({
-            query: (id) => ({
-                url: `/projects/${id}`,
+        deleteProject: builder.mutation<void, { id: number; force?: boolean }>({
+            query: ({ id, force }) => ({
+                url: `/projects/${id}${force ? '?force=true' : ''}`,
                 method: "DELETE",
             }),
             invalidatesTags: ["Projects"],

@@ -8,6 +8,8 @@ export type Tuser = {
     email: string;
     password: string;
     role: string;
+    avatar?: string;
+    createdat?: string;
 };
 
 export const usersAPI = createApi({
@@ -43,6 +45,14 @@ export const usersAPI = createApi({
             query: () => "/users",
             providesTags: ["Users"],
         }),
+        updateUser: builder.mutation<Tuser, { id: number; data: Partial<Tuser> }>({
+            query: ({ id, data }) => ({
+                url: `/users/${id}`,
+                method: "PUT",
+                body: data,
+            }),
+            invalidatesTags: ["Users"],
+        }),
         deleteUser: builder.mutation<void, number>({
             query: (id) => ({
                 url: `/users/${id}`,
@@ -57,5 +67,6 @@ export const {
     useLoginMutation,
     useCreateUsersMutation,
     useGetUsersQuery,
+    useUpdateUserMutation,
     useDeleteUserMutation,
 } = usersAPI;

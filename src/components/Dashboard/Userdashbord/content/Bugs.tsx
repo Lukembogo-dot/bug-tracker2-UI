@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useGetBugsByAssignedUserQuery, useCreateBugMutation, useUpdateBugMutation, useDeleteBugMutation } from '../../../../features/bugs/bugsAPI';
+import { useGetBugsByReporterQuery, useCreateBugMutation, useUpdateBugMutation, useDeleteBugMutation } from '../../../../features/bugs/bugsAPI';
+import { useGetCommentsQuery } from '../../../../features/comments/commentsAPI';
+import { toast } from 'react-toastify';
 
 
 type BugFormValues = {
@@ -18,15 +20,18 @@ export default function Bugs() {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  const { data, isLoading, error } = useGetBugsByAssignedUserQuery(user?.userid || 0);
+  const { data, isLoading, error } = useGetBugsByReporterQuery(user?.userid || 0);
   const bugs = data?.bugs || [];
   console.log(bugs);
+  const { data: commentsData } = useGetCommentsQuery();
+  const comments = commentsData?.comments || [];
   const [createBug, { isLoading: isCreating }] = useCreateBugMutation();
   const [updateBug] = useUpdateBugMutation();
   const [deleteBug] = useDeleteBugMutation();
 
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [editingBug, setEditingBug] = useState<number | null>(null);
+  const [expandedBug, setExpandedBug] = useState<number | null>(null);
 
   const schema = yup.object().shape({
     title: yup.string().required('title is required').min(3, 'title must be at least 3 characters'),
@@ -57,6 +62,7 @@ export default function Bugs() {
             assignedto: user.userid,
           },
         }).unwrap();
+        toast.success('Bug updated successfully!');
         setEditingBug(null);
       } else {
         await createBug({
@@ -68,6 +74,7 @@ export default function Bugs() {
           reportedby: user.userid,
           assignedto: user.userid,
         }).unwrap();
+        toast.success('Bug created successfully!');
       }
 
       reset();
@@ -90,6 +97,7 @@ export default function Bugs() {
     if (confirm('Are you sure you want to delete this bug?')) {
       try {
         await deleteBug(bugid).unwrap();
+        toast.success('Bug deleted successfully!');
       } catch (err: any) {
         setSubmitError(err.data?.message || 'Failed to delete bug');
       }
@@ -124,7 +132,7 @@ export default function Bugs() {
 
             <div className="relative z-10 flex flex-col min-h-screen px-4 sm:px-6 lg:px-8">
                 <div className="w-full px-4">
-                    <h1 className="text-3xl font-bold mb-6 text-center text-white">Bugs</h1>
+                    <h1 className="text-3xl font-bold mb-6 text-center text-white">My Reported Bugs</h1>
 
                     {/* Hero Image */}
                     <div className="card bg-black/60 text-white shadow-xl mb-6 rounded-md">
@@ -218,7 +226,7 @@ export default function Bugs() {
                     {/* Bugs List */}
                     <div className="card bg-black/60 text-white shadow-xl rounded-md">
                         <div className="card-body p-6">
-                            <h2 className="card-title text-2xl mb-6">Reported Bugs</h2>
+                            <h2 className="card-title text-2xl mb-6">Bugs I Reported</h2>
                             <div className="overflow-x-auto">
                                 <table className="table table-zebra">
                                     <thead>
@@ -229,50 +237,89 @@ export default function Bugs() {
                                             <th className="text-white">priority</th>
                                             <th className="text-white">status</th>
                                             <th className="text-white">Project</th>
+                                            <th className="text-white">Comments</th>
                                             <th className="text-white">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {bugs.length > 0 ? (
                                             bugs.map((bug) => (
-                                                <tr key={bug.bugid}>
-                                                    <th className="text-white">{bug.bugid}</th>
-                                                    <td className="text-white">{bug.title}</td>
-                                                    <td className="text-white">{bug.description}</td>
-                                                    <td>
-                                                        <span className={`badge ${
-                                                            bug.priority === 'Low' ? 'badge-info' :
-                                                            bug.priority === 'Medium' ? 'badge-warning' :
-                                                            bug.priority === 'High' ? 'badge-error' :
-                                                            'badge-error'
-                                                        }`}>
-                                                            {bug.priority}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span className={`badge ${
-                                                            bug.status === 'Open' ? 'badge-info' :
-                                                            bug.status === 'In Progress' ? 'badge-warning' :
-                                                            bug.status === 'Resolved' ? 'badge-success' :
-                                                            'badge-neutral'
-                                                        }`}>
-                                                            {bug.status}
-                                                        </span>
-                                                    </td>
-                                                    <td className="text-white">{bug.projectid}</td>
-                                                    <td>
-                                                        <button className="btn btn-sm btn-outline" onClick={() => handleEdit(bug)}>Edit</button>
-                                                        <button className="btn btn-sm btn-outline btn-error ml-2" onClick={() => handleDelete(bug.bugid)}>Delete</button>
-                                                    </td>
-                                                </tr>
+                                                <>
+                                                    <tr key={bug.bugid}>
+                                                        <th className="text-white">{bug.bugid}</th>
+                                                        <td className="text-white">{bug.title}</td>
+                                                        <td className="text-white">{bug.description}</td>
+                                                        <td>
+                                                            <span className={`badge ${
+                                                                bug.priority === 'Low' ? 'badge-info' :
+                                                                bug.priority === 'Medium' ? 'badge-warning' :
+                                                                bug.priority === 'High' ? 'badge-error' :
+                                                                'badge-error'
+                                                            }`}>
+                                                                {bug.priority}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span className={`badge ${
+                                                                bug.status === 'Open' ? 'badge-info' :
+                                                                bug.status === 'In Progress' ? 'badge-warning' :
+                                                                bug.status === 'Resolved' ? 'badge-success' :
+                                                                'badge-neutral'
+                                                            }`}>
+                                                                {bug.status}
+                                                            </span>
+                                                        </td>
+                                                        <td className="text-white">{bug.projectid}</td>
+                                                        <td>
+                                                            <button className="btn btn-sm btn-outline" onClick={() => setExpandedBug(expandedBug === bug.bugid ? null : bug.bugid)}>
+                                                                {expandedBug === bug.bugid ? 'Hide' : 'Show'} Comments ({comments.filter(c => c.bugid === bug.bugid).length})
+                                                            </button>
+                                                        </td>
+                                                        <td>
+                                                            <button className="btn btn-sm btn-outline" onClick={() => handleEdit(bug)}>Edit</button>
+                                                            <button className="btn btn-sm btn-outline btn-error ml-2" onClick={() => handleDelete(bug.bugid)}>Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                    {expandedBug === bug.bugid && (
+                                                        <tr>
+                                                            <td colSpan={8} className="bg-black/40">
+                                                                <div className="p-4">
+                                                                    <h4 className="text-white mb-2">Comments on this bug:</h4>
+                                                                    {comments.filter(c => c.bugid === bug.bugid).length > 0 ? (
+                                                                        comments.filter(c => c.bugid === bug.bugid).map((comment) => (
+                                                                            <div key={comment.commentid} className="chat chat-start mb-2">
+                                                                                <div className="chat-image avatar">
+                                                                                    <div className="w-8 rounded-full">
+                                                                                        <div className="bg-gray-400 w-full h-full rounded-full flex items-center justify-center text-white text-xs">
+                                                                                            U
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className="chat-header text-white text-sm">
+                                                                                    User {comment.username || comment.userid}
+                                                                                    <time className="text-xs opacity-50 ml-2">
+                                                                                        {new Date(comment.createdat).toLocaleString()}
+                                                                                    </time>
+                                                                                </div>
+                                                                                <div className="chat-bubble text-white text-sm">{comment.commenttext}</div>
+                                                                            </div>
+                                                                        ))
+                                                                    ) : (
+                                                                        <p className="text-white/60 text-sm">No comments yet.</p>
+                                                                    )}
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </>
                                             ))
                                         ) : (
                                             <tr>
-                                                <td colSpan={7} className="text-center py-8">
+                                                <td colSpan={8} className="text-center py-8">
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-.98-5.5-2.5m.5-4H7a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5M12 7v4" />
                                                     </svg>
-                                                    <span className="text-white/60">No bugs assigned to you yet.</span>
+                                                    <span className="text-white/60">You haven't reported any bugs yet.</span>
                                                 </td>
                                             </tr>
                                         )}

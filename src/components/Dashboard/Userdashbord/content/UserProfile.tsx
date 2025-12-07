@@ -1,10 +1,19 @@
 import { useState } from 'react';
+import { useUpdateUserMutation } from '../../../../features/auth/usersAPI';
+import { toast } from 'react-toastify';
 
 export default function UserProfile() {
-    const [user] = useState(() => {
+    const [user, setUser] = useState(() => {
         const storedUser = localStorage.getItem('user');
         return storedUser ? JSON.parse(storedUser) : null;
     });
+    const [isEditing, setIsEditing] = useState(false);
+    const [editData, setEditData] = useState({
+        username: user?.username || '',
+        email: user?.email || '',
+        avatar: user?.avatar || user?.username?.charAt(0).toUpperCase() || 'U',
+    });
+    const [, { isLoading: isUpdating }] = useUpdateUserMutation();
 
     if (!user) {
         return (
@@ -30,38 +39,121 @@ export default function UserProfile() {
         });
     };
 
+    const handleEdit = () => {
+        setIsEditing(true);
+        setEditData({
+            username: user?.username || '',
+            email: user?.email || '',
+            avatar: user?.avatar || user?.username?.charAt(0).toUpperCase() || 'U',
+        });
+    };
+
+    const handleSave = async () => {
+        if (!user) return;
+        // Since backend doesn't support update, update locally only
+        const newUser = { ...user, username: editData.username, email: editData.email, avatar: editData.avatar };
+        setUser(newUser);
+        localStorage.setItem('user', JSON.stringify(newUser));
+        setIsEditing(false);
+        toast.success('Profile updated successfully!');
+    };
+
+    const handleCancel = () => {
+        setIsEditing(false);
+    };
+
     return (
         <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900">
             {/* Overlay */}
             <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
 
-            <div className="relative z-10 flex flex-col min-h-screen px-4 sm:px-6 lg:px-8">
-                <div className="w-full px-4">
+            <div className="relative z-10 flex flex-col min-h-screen">
+                <div className="w-full">
                     <h1 className="text-3xl font-bold mb-6 text-center text-white">My Profile</h1>
 
                     {/* Profile Card */}
-                    <div className="card bg-black/60 text-white shadow-xl mb-6 rounded-md">
+                    <div className="card bg-black/60 text-white shadow-xl mb-8 rounded-md">
                         <div className="card-body p-6">
                             <div className="flex flex-col items-center space-y-4">
                                 <div className="avatar">
                                     <div className="w-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                                        <span className="text-2xl font-bold text-white">
-                                            {user.username?.charAt(0).toUpperCase() || 'U'}
+                                        <span className="text-2xl font-bold text-center text-white">
+                                            {isEditing ? editData.avatar : (user.avatar || user.username?.charAt(0).toUpperCase() || 'U')}
                                         </span>
                                     </div>
                                 </div>
-                                <div className="text-center space-y-2">
-                                    <h2 className="card-title text-2xl text-center">{user.username}</h2>
-                                    <div className="badge badge-primary">{user.role}</div>
-                                    <p className="text-lg opacity-90">{user.email}</p>
-                                    <p className="text-sm opacity-75">Member since {formatDate(user.createdat)}</p>
-                                </div>
+                                {isEditing ? (
+                                    <div className="w-full space-y-4">
+                                        <div className="form-control">
+                                            <label className="label">
+                                                <span className="label-text text-white">Username</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={editData.username}
+                                                onChange={(e) => setEditData({ ...editData, username: e.target.value })}
+                                                className="input input-bordered bg-white text-black w-full"
+                                            />
+                                        </div>
+                                        <div className="form-control">
+                                            <label className="label">
+                                                <span className="label-text text-white">Email</span>
+                                            </label>
+                                            <input
+                                                type="email"
+                                                value={editData.email}
+                                                onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                                                className="input input-bordered bg-white text-black w-full"
+                                            />
+                                        </div>
+                                        <div className="form-control">
+                                            <label className="label">
+                                                <span className="label-text text-white">Avatar Initial</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={editData.avatar}
+                                                onChange={(e) => setEditData({ ...editData, avatar: e.target.value })}
+                                                className="input input-bordered bg-white text-black w-full"
+                                                maxLength={1}
+                                            />
+                                        </div>
+                                        <div className="flex space-x-2">
+                                            <button
+                                                onClick={handleSave}
+                                                className="btn btn-primary"
+                                                disabled={isUpdating}
+                                            >
+                                                {isUpdating ? 'Saving...' : 'Save'}
+                                            </button>
+                                            <button
+                                                onClick={handleCancel}
+                                                className="btn btn-secondary"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="text-center space-y-2">
+                                        <h2 className="card-title text-2xl text-center">{user.username}</h2>
+                                        <div className="badge badge-primary">{user.role}</div>
+                                        <p className="text-lg opacity-90">{user.email}</p>
+                                        <p className="text-sm opacity-75">Member since {formatDate(user.createdat)}</p>
+                                        <button
+                                            onClick={handleEdit}
+                                            className="btn btn-outline btn-primary mt-4"
+                                        >
+                                            Edit Profile
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
 
                     {/* Profile Details */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <div className="card bg-black/60 text-white shadow-xl">
                             <div className="card-body">
                                 <h3 className="card-title text-xl mb-4">Account Information</h3>

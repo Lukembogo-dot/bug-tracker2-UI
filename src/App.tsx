@@ -8,6 +8,8 @@ import Contact from './components/contact/contacts'
 import Registration from './auth/registration'
 import { Userdashboard } from './components/Dashboard/Userdashbord/Aside/Userdashboard'
 import { Admindashboard } from './components/Dashboard/Admindashboard.tsx/Aside/Admindashboard'
+import ProtectedRoute from './components/ProtectedRoute'
+import LogoutButton from './components/LogoutButton'
 function App() {
   const router = createBrowserRouter([
     {
@@ -32,16 +34,17 @@ function App() {
     },
     {
       path: '/admin/dashboard',
-      element: <Admindashboard />
+      element: <ProtectedRoute><Admindashboard /></ProtectedRoute>
     },
     {
       path: '/user/dashboard',
-      element: <Userdashboard />
+      element: <ProtectedRoute><Userdashboard /></ProtectedRoute>
     }
   ])
 
   return (
     <>
+      <LogoutButton />
       <RouterProvider router={router} />
     </>
   )

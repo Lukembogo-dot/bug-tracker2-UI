@@ -28,7 +28,7 @@ export const Admindashboard = () => {
   return (
     <div className="drawer lg:drawer-open">
       <input id="admin-drawer" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content min-h-screen w-full">
+      <div className="drawer-content min-h-screen w-full p-6">
         {/* Navbar */}
         <nav className="navbar w-full bg-base-300">
           <label htmlFor="admin-drawer" aria-label="open sidebar" className="btn btn-square btn-ghost">

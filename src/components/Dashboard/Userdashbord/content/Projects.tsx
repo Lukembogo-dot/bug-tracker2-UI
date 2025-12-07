@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useGetProjectsByAssignedUserQuery } from '../../../../features/projects/projectsAPI';
+import type { TProject } from '../../../../features/projects/projectsAPI';
 
 export default function Projects() {
     const [user] = useState(() => {
@@ -9,6 +10,18 @@ export default function Projects() {
 
     const { data, isLoading, error } = useGetProjectsByAssignedUserQuery(user?.userid || 0);
     const projects = data?.projects || [];
+
+    const [selectedProject, setSelectedProject] = useState<TProject | null>(null);
+
+    const handleViewProject = (project: TProject) => {
+        setSelectedProject(project);
+        (document.getElementById('project-modal') as HTMLDialogElement)?.showModal();
+    };
+
+    const closeModal = () => {
+        setSelectedProject(null);
+        (document.getElementById('project-modal') as HTMLDialogElement)?.close();
+    };
    if(error){
     console.log("error",error);
    }
@@ -42,8 +55,8 @@ export default function Projects() {
             {/* Overlay */}
             <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
 
-            <div className="relative z-10 flex flex-col min-h-screen px-4 sm:px-6 lg:px-8">
-                <div className="w-full px-4">
+            <div className="relative z-10 flex flex-col min-h-screen">
+                <div className="w-full">
                     <h1 className="text-3xl font-bold mb-6 text-center text-white">My Projects</h1>
 
                     {/* Projects List */}
@@ -73,7 +86,12 @@ export default function Projects() {
                                                     <td className="text-white">User {project.createdby}</td>
                                                     <td className="text-white">{new Date(project.createdat).toLocaleDateString()}</td>
                                                     <td>
-                                                        <button className="btn btn-sm btn-outline">View</button>
+                                                        <button
+                                                            className="btn btn-sm btn-outline"
+                                                            onClick={() => handleViewProject(project)}
+                                                        >
+                                                            View
+                                                        </button>
                                                     </td>
                                                 </tr>
                                             ))
@@ -93,6 +111,44 @@ export default function Projects() {
                             </div>
                         </div>
                     </div>
+
+                    {/* Project Details Modal */}
+                    <dialog id="project-modal" className="modal">
+                        <div className="modal-box bg-white/95 backdrop-blur-sm">
+                            <h3 className="font-bold text-lg">Project Details</h3>
+                            {selectedProject && (
+                                <div className="py-4 space-y-3">
+                                    <div>
+                                        <strong>Project ID:</strong> #{selectedProject.projectid}
+                                    </div>
+                                    <div>
+                                        <strong>Project Name:</strong> {selectedProject.projectname}
+                                    </div>
+                                    <div>
+                                        <strong>Description:</strong>
+                                        <p className="mt-1">{selectedProject.description}</p>
+                                    </div>
+                                    <div>
+                                        <strong>Created By:</strong> User {selectedProject.createdby}
+                                    </div>
+                                    <div>
+                                        <strong>Assigned To:</strong> User {selectedProject.assignedto}
+                                    </div>
+                                    <div>
+                                        <strong>Created Date:</strong> {new Date(selectedProject.createdat).toLocaleString()}
+                                    </div>
+                                    <div>
+                                        <strong>Last Updated:</strong> {new Date(selectedProject.updatedat).toLocaleString()}
+                                    </div>
+                                </div>
+                            )}
+                            <div className="modal-action">
+                                <form method="dialog">
+                                    <button className="btn" onClick={closeModal}>Close</button>
+                                </form>
+                            </div>
+                        </div>
+                    </dialog>
                 </div>
             </div>
         </div>

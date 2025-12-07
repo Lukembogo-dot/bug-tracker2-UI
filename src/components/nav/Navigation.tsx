@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router';
 
 export const Navigation = () => {
+
   return (
     <div className="navbar bg-base-100 text-white shadow-sm bg-black/60 p-4 mb-8">
       <div className="navbar-start">

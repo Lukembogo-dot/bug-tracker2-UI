@@ -35,6 +35,10 @@ export const bugsAPI = createApi({
             query: (userid) => `/bugs/assignee/${userid}`,
             providesTags: ["Bugs"],
         }),
+        getBugsByReporter: builder.query<{ bugs: TBug[] }, number>({
+            query: (userid) => `/bugs/reporter/${userid}`,
+            providesTags: ["Bugs"],
+        }),
         getBugById: builder.query<TBug, number>({
             query: (id) => `/bugs/${id}`,
             providesTags: ["Bugs"],
@@ -69,6 +73,7 @@ export const {
     useGetBugsQuery,
     useGetBugByIdQuery,
     useGetBugsByAssignedUserQuery,
+    useGetBugsByReporterQuery,
     useCreateBugMutation,
     useUpdateBugMutation,
     useDeleteBugMutation,

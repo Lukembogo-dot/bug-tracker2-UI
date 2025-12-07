@@ -4,6 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useGetCommentsQuery, useCreateCommentMutation } from '../../../../features/comments/commentsAPI';
 import bugsImage from '../../../../assets/bugs.jpg';
+import { toast } from 'react-toastify';
 
 type CommentFormValues = {
   bugid: number;
@@ -41,6 +42,7 @@ export default function Comments() {
             userid: Number(user.userid),
             commenttext: formData.commenttext,
         }).unwrap();
+        toast.success('Comment added successfully!');
 
         reset();
         setSubmitError(null);
@@ -144,7 +146,7 @@ export default function Comments() {
                                                 </div>
                                             </div>
                                             <div className="chat-header">
-                                                User {comment.username || comment.userid}
+                                                {comment.username || comment.userid}
                                                 <time className="text-xs opacity-50">
                                                     {new Date(comment.createdat).toLocaleString()}
                                                 </time>

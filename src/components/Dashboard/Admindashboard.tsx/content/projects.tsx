@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+ import { useState, useEffect } from "react";
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useGetProjectsQuery, useUpdateProjectMutation, useCreateProjectMutation } from "../../../../features/projects/projectsAPI";
+import { useGetProjectsQuery, useUpdateProjectMutation, useCreateProjectMutation, useDeleteProjectMutation } from "../../../../features/projects/projectsAPI";
 import { useGetUsersQuery } from "../../../../features/auth/usersAPI";
+import { toast } from 'react-toastify';
 
 type ProjectFormValues = {
     projectname: string;
@@ -17,13 +18,14 @@ export default function Projects() {
         return storedUser ? JSON.parse(storedUser) : null;
     });
 
-    const isAdmin = user?.role === 'Admin';
+    const isAdmin = user?.role?.toLowerCase() === 'admin';
 
     const { data: projects, isLoading, error } = useGetProjectsQuery();
     const { data: usersData, refetch: refetchUsers } = useGetUsersQuery();
     const users = usersData?.users || [];
     const [createProject, { isLoading: isCreating }] = useCreateProjectMutation();
     const [updateProject] = useUpdateProjectMutation();
+    const [deleteProject] = useDeleteProjectMutation();
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editData, setEditData] = useState({ projectname: "", description: "" });
 
@@ -48,10 +50,6 @@ export default function Projects() {
                 return;
             }
 
-            if (!isAdmin) {
-                alert('You do not have permission to create projects. Admin access required.');
-                return;
-            }
 
             await createProject({
                 projectname: formData.projectname,
@@ -82,6 +80,18 @@ export default function Projects() {
         setEditingId(null);
     };
 
+    const handleDelete = async (id: number) => {
+    if (window.confirm("Are you sure you want to delete this project?")) {
+        try {
+            await deleteProject({ id, force: true }).unwrap();
+            toast.success('Project deleted successfully');
+        } catch (err: any) {
+            toast.error(err.data?.message || 'Failed to delete project');
+        }
+    }
+};
+
+
     if (isLoading) return (
         <div className="flex items-center justify-center min-h-screen">
             <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -104,8 +114,8 @@ export default function Projects() {
             {/* Overlay */}
             <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
 
-            <div className="relative z-10 flex flex-col min-h-screen px-4 sm:px-6 lg:px-8">
-                <div className="w-full px-4 py-6">
+            <div className="relative z-10 flex flex-col min-h-screen">
+                <div className="w-full">
                     <h1 className="text-3xl font-bold text-white mb-6">All Projects</h1>
 
                     {/* Create Project Form - Admin Only */}
@@ -235,6 +245,12 @@ export default function Projects() {
                                                         className="btn btn-primary btn-sm"
                                                     >
                                                         Edit
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(project.projectid)}
+                                                        className="btn btn-error btn-sm"
+                                                    >
+                                                        Delete
                                                     </button>
                                                 </div>
                                             </div>
