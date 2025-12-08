@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { useGetBugsByReporterQuery, useCreateBugMutation, useUpdateBugMutation, useDeleteBugMutation } from '../../../../features/bugs/bugsAPI';
+import { useGetBugsQuery, useGetBugsByReporterQuery, useCreateBugMutation, useUpdateBugMutation, useDeleteBugMutation } from '../../../../features/bugs/bugsAPI';
 import { useGetCommentsQuery } from '../../../../features/comments/commentsAPI';
 import { toast } from 'react-toastify';
 
@@ -20,7 +20,12 @@ export default function Bugs() {
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  const { data, isLoading, error } = useGetBugsByReporterQuery(user?.userid || 0);
+  const isAdmin = user?.role?.toLowerCase() === 'admin';
+  const { data: allBugs, isLoading: allLoading, error: allError } = useGetBugsQuery();
+  const { data: userBugs, isLoading: userLoading, error: userError } = useGetBugsByReporterQuery(user?.userid || 0);
+  const data = isAdmin ? allBugs : userBugs;
+  const isLoading = isAdmin ? allLoading : userLoading;
+  const error = isAdmin ? allError : userError;
   const bugs = data?.bugs || [];
   console.log(bugs);
   const { data: commentsData } = useGetCommentsQuery();
@@ -99,6 +104,7 @@ export default function Bugs() {
         await deleteBug(bugid).unwrap();
         toast.success('Bug deleted successfully!');
       } catch (err: any) {
+        console.log('Delete bug error:', err);
         setSubmitError(err.data?.message || 'Failed to delete bug');
       }
     }
@@ -126,13 +132,13 @@ export default function Bugs() {
     );
 
     return (
-        <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900">
+        <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 p-6 md:p-10">
             {/* Overlay */}
             <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
 
             <div className="relative z-10 flex flex-col min-h-screen px-4 sm:px-6 lg:px-8">
                 <div className="w-full px-4">
-                    <h1 className="text-3xl font-bold mb-6 text-center text-white">My Reported Bugs</h1>
+                    <h1 className="text-3xl font-bold mb-6 text-center text-white">{isAdmin ? 'All Bugs' : 'My Reported Bugs'}</h1>
 
                     {/* Hero Image */}
                     <div className="card bg-black/60 text-white shadow-xl mb-6 rounded-md">
@@ -226,7 +232,7 @@ export default function Bugs() {
                     {/* Bugs List */}
                     <div className="card bg-black/60 text-white shadow-xl rounded-md">
                         <div className="card-body p-6">
-                            <h2 className="card-title text-2xl mb-6">Bugs I Reported</h2>
+                            <h2 className="card-title text-2xl mb-6">{isAdmin ? 'All Bugs' : 'Bugs I Reported'}</h2>
                             <div className="overflow-x-auto">
                                 <table className="table table-zebra">
                                     <thead>
@@ -319,7 +325,7 @@ export default function Bugs() {
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-white/30 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-.98-5.5-2.5m.5-4H7a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5M12 7v4" />
                                                     </svg>
-                                                    <span className="text-white/60">You haven't reported any bugs yet.</span>
+                                                    <span className="text-white/60">{isAdmin ? 'No bugs found.' : "You haven't reported any bugs yet."}</span>
                                                 </td>
                                             </tr>
                                         )}

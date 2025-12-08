@@ -110,7 +110,7 @@ export default function Projects() {
     );
 
     return (
-        <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900">
+        <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 p-6 md:p-10">
             {/* Overlay */}
             <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
 

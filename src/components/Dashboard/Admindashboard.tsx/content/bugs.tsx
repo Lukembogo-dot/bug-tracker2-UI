@@ -128,8 +128,9 @@ export default function Bugs() {
           await deleteBug(bugId).unwrap();
           toast.success('Bug deleted successfully!');
         } catch (err: any) {
-          toast.error(err.data?.message || 'Failed to delete bug');
-        }
+           console.log('Delete bug error:', err);
+           toast.error(err.data?.message || 'Failed to delete bug');
+         }
       }
     };
 
@@ -183,7 +184,7 @@ export default function Bugs() {
     }
 
     return (
-        <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900">
+        <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 p-6 md:p-10">
             {/* Overlay */}
             <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
 

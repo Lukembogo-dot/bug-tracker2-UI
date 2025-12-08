@@ -18,7 +18,7 @@ export default function UserProfile() {
     if (!user) {
         return (
             <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900">
-                <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
+                <div className="absolute inset-0 bg-black opacity-20 z-0 "></div>
                 <div className="relative z-10 flex items-center justify-center min-h-screen">
                     <div className="alert alert-error max-w-md">
                         <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
@@ -63,7 +63,7 @@ export default function UserProfile() {
     };
 
     return (
-        <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900">
+        <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 p-6 md:p-10">
             {/* Overlay */}
             <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
 

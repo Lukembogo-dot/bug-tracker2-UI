@@ -73,7 +73,7 @@ export default function Comments() {
             {/* Overlay */}
             <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
 
-            <div className="relative z-10 flex flex-col min-h-screen px-4 sm:px-6 lg:px-8">
+            <div className="relative z-10 flex flex-col min-h-screen px-4 sm:px-6 lg:px-8 p-6 md:p-10">
                 <div className="w-full px-4">
                     <h1 className="text-3xl font-bold mb-6 text-center text-white">Comments</h1>
 

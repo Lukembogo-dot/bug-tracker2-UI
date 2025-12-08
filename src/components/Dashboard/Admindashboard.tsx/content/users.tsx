@@ -1,23 +1,29 @@
 import { useState } from "react";
 import { useGetUsersQuery, useDeleteUserMutation } from "../../../../features/auth/usersAPI";
+import { toast } from 'react-toastify';
 
 export default function Users() {
-    const [user] = useState(() => {
+    const [currentUser] = useState(() => {
         const storedUser = localStorage.getItem('user');
         return storedUser ? JSON.parse(storedUser) : null;
     });
 
-    const isAdmin = user?.role?.toLowerCase() === 'admin';
+    const isAdmin = currentUser?.role?.toLowerCase() === 'admin';
 
     const { data, isLoading, error } = useGetUsersQuery();
     const users = data?.users ?? [];
     const [deleteUser] = useDeleteUserMutation();
 
     const handleDelete = async (id: number) => {
-        if (window.confirm("Are you sure you want to delete this user?")) {
-            await deleteUser(id);
-        }
-    };
+  try {
+    await deleteUser(id).unwrap();
+    toast.success("User deleted successfully");
+  } catch (error: any) {
+    console.error("Delete user error:", error);
+    toast.error("Failed to delete user");
+  }
+};
+
 
     if (!isAdmin) {
         return (
@@ -53,7 +59,7 @@ export default function Users() {
     );
 
     return (
-        <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900">
+        <div className="relative min-h-screen bg-gradient-to-br from-blue-900 to-purple-900 p-6 md:p-10">
             {/* Overlay */}
             <div className="absolute inset-0 bg-black opacity-20 z-0"></div>
 
@@ -87,6 +93,7 @@ export default function Users() {
                                     <button
                                         className="btn btn-error btn-sm"
                                         onClick={() => handleDelete(user.userid)}
+                                        disabled={user.userid === currentUser?.userid || user.role === 'admin'}
                                     >
                                         Delete
                                     </button>
