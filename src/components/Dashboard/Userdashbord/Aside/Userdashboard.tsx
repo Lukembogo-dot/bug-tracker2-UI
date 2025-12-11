@@ -5,7 +5,7 @@ import Projects from '../content/Projects'
 import UserProfile from '../content/UserProfile'
 
 export const Userdashboard = () => {
-  const [activeView, setActiveView] = useState<'profile' | 'comments' | 'bugs' | 'projects' | 'homepage'>('profile')
+  const [activeView, setActiveView] = useState<'profile' | 'comments' | 'bugs' | 'projects' | 'homepage'>('bugs')
 
   const renderContent = () => {
     switch (activeView) {

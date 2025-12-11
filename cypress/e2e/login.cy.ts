@@ -21,7 +21,7 @@ describe('Login Tests', () => {
     cy.get('input[type="password"]').type('123456789');
     cy.get('button[type="submit"]').click();
     // Assuming successful login navigates to dashboard
-    cy.url().should('include', '/dashboard');
+    cy.url().should('include', '/user/dashboard');
     // Check if token is stored in localStorage
     cy.window().its('localStorage.token').should('exist');
   });
@@ -50,6 +50,6 @@ describe('Login Tests', () => {
     cy.get('input[type="email"]').type('test@example.com');
     cy.get('button[type="submit"]').click();
     // Password is required, so form shouldn't submit or show error
-    cy.url().should('not.include', '/dashboard');
+    cy.url().should('not.include', '/user/dashboard');
   });
 });
